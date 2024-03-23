@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewpoint" content="width=device-width, initial-scale=1/0">
+    <title>QR code generator</title>
+    <link rel="stylesheet" href="C:\Users\M Sanjana\html practice\qr code generator\style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+    <section id="main" style="position: relative;">
+        <div id="large-header" class="intro">
+            <canvas id="demo-canvas"></canvas>
+        </div>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js"></script>
+        <script>
+            (function () {
+
+                var width, height, largeHeader, canvas, ctx, points, target, animateHeader = true;
+
+                // Main
+                initHeader();
+                initAnimation();
+                addListeners();
+
+                function initHeader() {
+                    width = window.innerWidth;
+                    height = window.innerHeight;
+                    target = { x: width / 2, y: height / 2 };
+
+                    largeHeader = document.getElementById('large-header');
+                    largeHeader.style.height = height + 'px';
+
+                    canvas = document.getElementById('demo-canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx = canvas.getContext('2d');
+
+                    // create points
+                    points = [];
+                    for (var x = 0; x < width; x = x + width / 20) {
+                        for (var y = 0; y < height; y = y + height / 20) {
+                            var px = x + Math.random() * width / 20;
+                            var py = y + Math.random() * height / 20;
+                            var p = { x: px, originX: px, y: py, originY: py };
+                            points.push(p);
+                        }
+                    }
+
+                    // for each point find the 5 closest points
+                    for (var i = 0; i < points.length; i++) {
+                        var closest = [];
+                        var p1 = points[i];
+                        for (var j = 0; j < points.length; j++) {
+                            var p2 = points[j]
+                            if (!(p1 == p2)) {
+                                var placed = false;
+                                for (var k = 0; k < 5; k++) {
+                                    if (!placed) {
+                                        if (closest[k] == undefined) {
+                                            closest[k] = p2;
+                                            placed = true;
+                                        }
+                                    }
+                                }
+
+                                for (var k = 0; k < 5; k++) {
+                                    if (!placed) {
+                                        if (getDistance(p1, p2) < getDistance(p1, closest[k])) {
+                                            closest[k] = p2;
+                                            placed = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        p1.closest = closest;
+                    }
+
+                    // assign a circle to each point
+                    for (var i in points) {
+                        var c = new Circle(points[i], 2 + Math.random() * 2, 'rgba(255,255,255,0.3)');
+                        points[i].circle = c;
+                    }
+                }
+
+                // Event handling
+                function addListeners() {
+                    if (!('ontouchstart' in window)) {
+                        window.addEventListener('mousemove', mouseMove);
+                    }
+                    window.addEventListener('scroll', scrollCheck);
+                    window.addEventListener('resize', resize);
+                }
+
+                function mouseMove(e) {
+                    var posx = posy = 0;
+                    if (e.pageX || e.pageY) {
+                        posx = e.pageX;
+                        posy = e.pageY;
+                    }
+                    else if (e.clientX || e.clientY) {
+                        posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+                        posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+                    }
+                    target.x = posx;
+                    target.y = posy;
+                }
+
+                function scrollCheck() {
+                    if (document.body.scrollTop > height) animateHeader = false;
+                    else animateHeader = true;
+                }
+
+                function resize() {
+                    width = window.innerWidth;
+                    height = window.innerHeight;
+                    largeHeader.style.height = height + 'px';
+                    canvas.width = width;
+                    canvas.height = height;
+                }
+
+                // animation
+                function initAnimation() {
+                    animate();
+                    for (var i in points) {
+                        shiftPoint(points[i]);
+                    }
+                }
+
+                function animate() {
+                    if (animateHeader) {
+                        ctx.clearRect(0, 0, width, height);
+                        for (var i in points) {
+                            // detect points in range
+                            if (Math.abs(getDistance(target, points[i])) < 4000) {
+                                points[i].active = 0.3;
+                                points[i].circle.active = 0.6;
+                            } else if (Math.abs(getDistance(target, points[i])) < 20000) {
+                                points[i].active = 0.1;
+                                points[i].circle.active = 0.3;
+                            } else if (Math.abs(getDistance(target, points[i])) < 40000) {
+                                points[i].active = 0.02;
+                                points[i].circle.active = 0.1;
+                            } else {
+                                points[i].active = 0;
+                                points[i].circle.active = 0;
+                            }
+
+                            drawLines(points[i]);
+                            points[i].circle.draw();
+                        }
+                    }
+                    requestAnimationFrame(animate);
+                }
+
+                function shiftPoint(p) {
+                    TweenLite.to(p, 1 + 1 * Math.random(), {
+                        x: p.originX - 50 + Math.random() * 100,
+                        y: p.originY - 50 + Math.random() * 100, ease: Circ.easeInOut,
+                        onComplete: function () {
+                            shiftPoint(p);
+                        }
+                    });
+                }
+
+                // Canvas manipulation
+                function drawLines(p) {
+                    if (!p.active) return;
+                    for (var i in p.closest) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p.closest[i].x, p.closest[i].y);
+                        ctx.strokeStyle = 'rgba(1,42,17,' + p.active + ')';
+                        ctx.stroke();
+                    }
+                }
+
+                function Circle(pos, rad, color) {
+                    var _this = this;
+
+                    // constructor
+                    (function () {
+                        _this.pos = pos || null;
+                        _this.radius = rad || null;
+                        _this.color = color || null;
+                    })();
+
+                    this.draw = function () {
+                        if (!_this.active) return;
+                        ctx.beginPath();
+                        ctx.arc(_this.pos.x, _this.pos.y, _this.radius, 0, 2 * Math.PI, false);
+                        ctx.fillStyle = 'rgba(0,42,17,' + _this.active + ')';
+                        ctx.fill();
+                    };
+                }
+
+                // Util
+                function getDistance(p1, p2) {
+                    return Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2);
+                }
+
+            })();
+
+        </script>
+        </div>
+        <section>
+            <div class="container" id="id2">
+                <div class="cardInner">
+                    <div class="Circle1"></div>
+                    <div class="Circle2"></div>
+                    <div class="Circle3"></div>
+                    <div class="Circle4"></div>
+                    <div class="Circle5"></div>
+                    <div class="Circle6"></div>
+                    <p>Enter the URL or text</p>
+                    <div class="container1">
+                        <form action="/" id="qr-form">
+                            <input type="text" name="qr-code-content" id="qr-content" value=""
+                                placeholder="Enter Text or URL..." autocomplete="off" />
+                            <div style="padding:0px 15% 1%; align-items: center;top: 50%; justify-content: center; left: 50%; bottom: 10%; max-width: 300px;"
+                                class="imgBox" id="qr-code"></div>
+                            <input style="width: 50%;
+                        height: 30px;
+                        background: #201e1e;
+                        border: 0;
+                        color: aliceblue;
+                        outline: 0;
+                        border-radius: 5px;
+                        box-sizing: 0 10px 10px rgba(165, 73, 73, 0.1);
+                        cursor: pointer;
+                        padding: 1%;
+                        margin: 3px 1px;
+                        font-weight: 500;"
+                                onmouseover="this.style.color='#191818';this.style.background ='rgb(252, 250, 250)';this.style.textShadow = '#121111';"
+                                onmouseout="this.style.background='#201e1e'; this.style.color='aliceblue'; this.style.textShadow='none';"
+                                id="generate" type="submit" value="Generate QR Code" />
+                        </form><br />
+                        <button id="btn">Download QR CODE</button>
+                        <script>
+                            ///*shift,alt,f--for--aligning--the--context*/
+                            async function downloadImage(imageSrc, nameOfDownload = 'qrCode.png',) {
+                                const response = await fetch(imageSrc);
+
+                                const blobImage = await response.blob();
+
+                                const href = URL.createObjectURL(blobImage);
+
+                                const anchorElement = document.createElement('a');
+                                anchorElement.href = href;
+                                anchorElement.download = nameOfDownload;
+
+                                document.body.appendChild(anchorElement);
+                                anchorElement.click();
+
+                                document.body.removeChild(anchorElement);
+                                window.URL.revokeObjectURL(href);
+                            }
+
+                            const btn = document.getElementById('btn');
+
+                            btn.addEventListener('click', () => {
+                                const qrCodeImageSrc = document.getElementById('qr-code').getElementsByTagName('img')[0].src;
+                                downloadImage(qrCodeImageSrc, 'qrcode.png',)
+                                    .then(() => {
+                                        console.log('The image has been downloaded');
+                                    })
+                                    .catch(err => {
+                                        console.log('Error downloading image: ', err);
+                                    });
+                            });
+
+                        </script>
+                        <button id="share">Share QR CODE</button>
+                        <script>
+                            const shareBtn = document.getElementById('share');
+
+                            shareBtn.addEventListener('click', () => {
+                                const qrCodeImageSrc = document.getElementById('qr-code').getElementsByTagName('img')[0].src;
+                                if (navigator.share) {
+                                    navigator.share({
+                                        title: 'QR Code',
+                                        text: 'Here is the QR code you generated.',
+                                        url: qrCodeImageSrc,
+                                    })
+                                        .then(() => console.log('Successful share'))
+                                        .catch((error) => console.log('Error sharing', error));
+                                } else {
+                                    console.log('Web Share API not supported in your browser.');
+                                }
+                            });
+                        </script>
+
+                    </div>
+                </div>
+            </div>
+            <script>
+                let qrContentInput = document.getElementById("qr-content");
+                let qrGenerationForm =
+                    document.getElementById("qr-form");
+                let qrCode;
+
+                function generateQrCode(qrContent) {
+                    return new QRCode("qr-code", {
+                        text: qrContent,
+                        width: 256,
+                        height: 256,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H,
+                    });
+                }
+
+                // Event listener for form submit event
+                qrGenerationForm.addEventListener("submit", function (event) {
+                    // Prevent form submission
+                    event.preventDefault();
+                    let qrContent = qrContentInput.value;
+                    if (qrContent.length > 0) {
+                        if (qrCode == null) {
+
+                            // Generate code initially
+                            qrCode = generateQrCode(qrContent);
+                            imgBox.classList.add("show-img");
+
+                        } else {
+
+                            // If code already generated then make 
+                            // again using same object
+                            qrCode.makeCode(qrContent);
+                            imgBox.classList.add("show-img");
+
+                        }
+                    }
+                    else {
+                        qrContent.classList.add('error');
+                        setTimeout(() => {
+                            qrContent.classList.remove('error');
+                        }, 1000);
+                    }
+                });
+
+            </script>
+        </section>
+    </section>
+</body>
+
+</html>
