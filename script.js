@@ -1,3 +1,12 @@
+fetch('https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js')
+.then(response => response.text())
+.then(data => {
+    let script = document.createElement('script');
+    script.textContent = data;
+    document.head.appendChild(script);
+})
+.catch(error => console.error('Error:', error));
+
 (function () {
 
                 var width, height, largeHeader, canvas, ctx, points, target, animateHeader = true;
