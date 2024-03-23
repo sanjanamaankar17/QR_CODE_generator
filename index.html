@@ -366,26 +366,6 @@ background-color: rgb(252, 250, 250);
                             });
 
                         </script>
-                        <button id="share">Share QR CODE</button>
-                        <script>
-                            const shareBtn = document.getElementById('share');
-
-                            shareBtn.addEventListener('click', () => {
-                                const qrCodeImageSrc = document.getElementById('qr-code').getElementsByTagName('img')[0].src;
-                                if (navigator.share) {
-                                    navigator.share({
-                                        title: 'QR Code',
-                                        text: 'Here is the QR code you generated.',
-                                        url: qrCodeImageSrc,
-                                    })
-                                        .then(() => console.log('Successful share'))
-                                        .catch((error) => console.log('Error sharing', error));
-                                } else {
-                                    console.log('Web Share API not supported in your browser.');
-                                }
-                            });
-                        </script>
-
                     </div>
                 </div>
             </div>
