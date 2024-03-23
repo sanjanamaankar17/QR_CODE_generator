@@ -4,8 +4,288 @@
 <head>
     <meta name="viewpoint" content="width=device-width, initial-scale=1/0">
     <title>QR code generator</title>
-    <link rel="stylesheet" href="C:\Users\M Sanjana\html practice\qr code generator\style.css">
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        
+*{
+    margin: 0%;
+    padding: 0%;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
+}
+@import url('https://fonts.googleapis.com/css?family=Orbitron&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Hind&display=swap');
+
+* {
+    -webkit-font-smoothing: antialiased;
+}
+.Circle1 {
+    z-index: -10;
+    position: absolute;
+    height: 80px;
+    width: 80px;
+    right: -20px;
+    top: -30px;
+    border-radius: 50%;
+    background-color: rgb(84, 145, 11);
+    animation: enlarge;
+    animation-duration: 7s;
+    animation-iteration-count: infinite;
+}
+@keyframes enlarge {
+    50% {
+        transform: scale(2.5);
+    }
+}
+.Circle2 {
+    z-index: -8;
+    position: absolute;
+    height: 150px;
+    width: 150px;
+    right: -50px;
+    top: -70px;
+    border-radius: 50%;
+    background-color: rgba(100, 186, 42, 0.7);
+
+    animation: enlarge;
+    animation-duration: 7s;
+    animation-iteration-count: infinite;
+}
+
+.Circle3 {
+    z-index: -50;
+    position: absolute;
+    height: 200px;
+    width: 200px;
+    right: -50px;
+    top: -100px;
+    border-radius: 50%;
+    background-color: rgba(166, 241, 45, 0.7);
+
+    animation: enlarge;
+    animation-duration: 7s;
+    animation-iteration-count: infinite;
+}
+.Circle4 {
+    z-index: -10;
+    position: absolute;
+    height: 80px;
+    width: 80px;
+    left: -20px;
+    bottom: -30px;
+    border-radius: 50%;
+    background-color: rgb(84, 145, 11);
+    animation: enlarge;
+    animation-duration: 7s;
+    animation-iteration-count: infinite;
+}
+@keyframes enlarge {
+    50% {
+        transform: scale(2.5);
+    }
+}
+.Circle5 {
+    z-index: -8;
+    position: absolute;
+    height: 150px;
+    width: 150px;
+    left: -50px;
+    bottom: -60px;
+    border-radius: 50%;
+    background-color: rgba(100, 186, 42, 0.7);
+
+    animation: enlarge;
+    animation-duration: 7s;
+    animation-iteration-count: infinite;
+}
+
+.Circle6 {
+    z-index: -50;
+    position: absolute;
+    height: 200px;
+    width: 200px;
+    left: -50px;
+    bottom: -80px;
+    border-radius: 50%;
+    background-color: rgba(166, 241, 45, 0.7);
+
+    animation: enlarge;
+    animation-duration: 7s;
+    animation-iteration-count: infinite;
+}
+
+body{
+    /*background: linear-gradient(to left, rgb(250, 223, 123),rgb(235, 197, 61),rgb(246, 133, 28),rgb(255, 111, 0));
+    background-image: linear-gradient(to right, #B958A5, #FFFFFF);*/
+    background-image: linear-gradient(to right, #034f2d, #85C88A);
+    z-index: 1;
+    overflow: hidden;
+    position: relative;
+    background-size: cover;
+    background-position: center center;
+    /*background: rgb(0, 42, 17);*/
+}
+.container{
+    display: block;
+    justify-items: center;
+    align-items: center ;
+    align-content: center;
+    text-align: center;
+    width: 400px;
+    padding: 25px 25px;
+    position: absolute;
+    /*moves in the center of the webpage*/
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    background: rgba(245, 245, 245, 0.447);
+    background-image: linear-gradient(90deg, #dcff8b6f, #b0faba49);
+    box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px 0px inset, rgba(17, 17, 26, 0.05) 0px 8px 32px 0px;
+    box-shadow: 0px 31px 35px -26px #082110;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow:
+        -2px -2px 6px rgba(#fff, .6),
+        2px 2px 12px #c8d8e7;
+    
+}
+.container p{
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 8px;
+}.container1 input{
+    box-shadow:
+    -2px -2px 6px rgba(#fff, .6),
+            2px 2px 12px #c8d8e7;
+    --top-shadow: inset 1px 1px 3px #c5e3cd, inset 2px 2px 6px #c5e3c9;
+    --bottom-shadow: inset -2px -2px 4px rgba(255, 255, 255, .7);
+    width: 100%;
+    height: 50px;
+    border: 1px solid rgba(243, 243, 243, 0.144);
+    outline: 0;
+    padding: 10px;
+    box-shadow:
+            -2px -2px 6px rgba(#fff, .6),
+            2px 2px 12px #c8d8e7;
+    margin: 10px 0 20px;
+    border-radius: 10px;
+}
+
+.container button{
+    width: 50%;
+    height: 30px;
+    background: #201e1e;
+    border: 0;
+    color: aliceblue;
+    outline: 0;
+    border-radius: 5px;
+    box-sizing: 0 10px 10px rgba(165, 73, 73, 0.1);
+    cursor: pointer;
+    margin: 3px 0;
+    font-weight: 500;
+}
+#download-btn a:hover{
+    background-color: rgb(252, 250, 250);
+        text-shadow: #121111;
+        color: #191818;
+        
+}
+.container button:hover{
+    background-color: rgb(252, 250, 250);
+    text-shadow: #121111;
+    color: #191818;
+}
+#generate:hover{
+background-color: rgb(252, 250, 250);
+    text-shadow: #121111;
+    color: #191818;
+}
+#generate:hover {
+    background-color: rgb(252, 250, 250);
+    text-shadow: #121111;
+    color: #191818;
+}
+#imgBox{
+    width: 200px;
+    border-radius: 5px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 10s;
+}
+
+#imgBox img{
+    width: 100%;
+    padding: 10px;
+}
+
+#imgBox.show-img{
+    max-width: 300px;
+    margin: 10px auto;
+    border: 10px solid snow;
+}
+.error{
+    animation: shake 0.1s linear 10;
+}
+@keyframes shake {
+    0% { transform: translateX(0) ;}
+    25% { transform: translateX(-2px) ;}
+    50% { transform: translateX(0) ;}
+    75% { transform: translateX(2px) ;}
+    100% { transform: translateX(0) ;}
+}
+
+.container1 input #qr-content {
+    --top-shadow: inset 1px 1px 3px #c5e3cd, inset 2px 2px 6px #c5e3c9;
+    --bottom-shadow: inset -2px -2px 4px rgba(255, 255, 255, .7);
+
+    border-radius: 10px;
+    overflow: hidden;
+
+    &:before,
+    &:after {
+        left: 0;
+        top: 0;
+        display: block;
+        content: "";
+        pointer-events: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+    }
+
+    &:before {
+        box-shadow: var(--bottom-shadow);
+    }
+
+    &:after {
+        box-shadow: var(--top-shadow);
+    }
+}
+#qr-content {
+    background-color: #e3f7e9;
+    padding: 16px 32px;
+    border: none;
+    display: block;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 600;
+    color: #013810;
+    transition: all 240ms ease-out;
+    width: 100%;
+
+    &::placeholder {
+        color: #6d8f7f;
+    }
+
+    &:focus {
+        outline: none;
+        color: #022c10;
+        background-color: lighten(#e3edf7, 3%);
+    }
+};
+
+
+    </style>
 </head>
 
 <body>
